@@ -1,3 +1,4 @@
+  
 import Product from '../infra/typeorm/entities/Product';
 
 import ICreateProductDTO from '../dtos/ICreateProductDTO';

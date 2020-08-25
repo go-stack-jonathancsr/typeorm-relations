@@ -12,12 +12,21 @@ interface IRequest {
 }
 
 @injectable()
-class CreateProductService {
-  constructor(private productsRepository: IProductsRepository) {}
+export default class CreateProductService {
+  constructor(
+    @inject('ProductsRepository')
+    private productsRepository: IProductsRepository,
+  ) {}
 
   public async execute({ name, price, quantity }: IRequest): Promise<Product> {
-    // TODO
+    if (await this.productsRepository.findByName(name)) {
+      throw new AppError('Product already exists');
+    }
+
+    return this.productsRepository.create({
+      name,
+      price,
+      quantity,
+    });
   }
 }
-
-export default CreateProductService;
