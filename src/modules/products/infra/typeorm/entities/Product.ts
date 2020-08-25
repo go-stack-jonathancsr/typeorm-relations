@@ -1,4 +1,3 @@
-  
 import {
   Entity,
   Column,
@@ -6,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 
 import OrdersProducts from '@modules/orders/infra/typeorm/entities/OrdersProducts';
@@ -15,16 +15,17 @@ class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column()
   name: string;
 
-  @Column({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
+  @Column()
   price: number;
 
-  @Column('integer')
+  @Column({ type: 'int' })
   quantity: number;
 
   @OneToMany(() => OrdersProducts, ordersProducts => ordersProducts.product)
+  @JoinColumn({ name: 'id' })
   order_products: OrdersProducts[];
 
   @CreateDateColumn()

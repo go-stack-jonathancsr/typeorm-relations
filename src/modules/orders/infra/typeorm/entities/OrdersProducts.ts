@@ -17,23 +17,23 @@ class OrdersProducts {
   id: string;
 
   @ManyToOne(() => Order, order => order.order_products)
-  @JoinColumn({ name: 'order_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @ManyToOne(() => Product, product => product.order_products)
-  @JoinColumn({ name: 'product_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @Column('uuid')
+  @Column()
   product_id: string;
 
-  @Column('uuid')
+  @Column()
   order_id: string;
 
-  @Column({ type: 'decimal', scale: 2, precision: 10 })
+  @Column()
   price: number;
 
-  @Column('integer')
+  @Column()
   quantity: number;
 
   @CreateDateColumn()

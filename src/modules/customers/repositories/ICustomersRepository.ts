@@ -1,4 +1,3 @@
-  
 import Customer from '../infra/typeorm/entities/Customer';
 
 import ICreateCustomerDTO from '../dtos/ICreateCustomerDTO';

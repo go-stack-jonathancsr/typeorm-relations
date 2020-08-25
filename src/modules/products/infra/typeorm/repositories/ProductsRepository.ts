@@ -1,4 +1,4 @@
-import { getRepository, Repository, In, PromiseUtils } from 'typeorm';
+import { getRepository, Repository, In } from 'typeorm';
 
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
@@ -9,7 +9,7 @@ interface IFindProducts {
   id: string;
 }
 
-export default class ProductsRepository implements IProductsRepository {
+class ProductsRepository implements IProductsRepository {
   private ormRepository: Repository<Product>;
 
   constructor() {
@@ -21,7 +21,11 @@ export default class ProductsRepository implements IProductsRepository {
     price,
     quantity,
   }: ICreateProductDTO): Promise<Product> {
-    const product = this.ormRepository.create({ name, price, quantity });
+    const product = this.ormRepository.create({
+      name,
+      price,
+      quantity,
+    });
 
     await this.ormRepository.save(product);
 
@@ -29,19 +33,23 @@ export default class ProductsRepository implements IProductsRepository {
   }
 
   public async findByName(name: string): Promise<Product | undefined> {
-    const product = await this.ormRepository.findOne({
+    const findProduct = await this.ormRepository.findOne({
       where: {
         name,
       },
     });
 
-    return product;
+    return findProduct;
   }
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
     const findProducts = await this.ormRepository.find({
       where: {
-        id: In(products.map(product => product.id)),
+        id: In(
+          products.map(item => {
+            return item.id;
+          }),
+        ),
       },
     });
 
@@ -51,6 +59,24 @@ export default class ProductsRepository implements IProductsRepository {
   public async updateQuantity(
     products: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    return this.ormRepository.save(products);
+    const productsToUpdate: Product[] = [];
+
+    await Promise.all(
+      products.map(async product => {
+        const productFound = await this.ormRepository.findOne(product.id);
+        if (productFound) {
+          productFound.quantity = product.quantity;
+          productsToUpdate.push(productFound);
+        }
+
+        return productFound;
+      }),
+    );
+
+    const updatedProducts = await this.ormRepository.save(productsToUpdate);
+
+    return updatedProducts;
   }
 }
+
+export default ProductsRepository;

@@ -1,4 +1,3 @@
-  
 import { Request, Response } from 'express';
 
 import { container } from 'tsyringe';
@@ -16,6 +15,6 @@ export default class ProductsController {
       quantity,
     });
 
-    return response.status(201).json(product);
+    return response.json(product);
   }
 }
